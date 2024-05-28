@@ -1,0 +1,10 @@
+#Para criar/iniciar Projeto React:
+    execute in (PowerShell, GitBash, Terminal-VsCode){
+        $ npm create vite@latest
+            select (React --> TypeScript)
+
+        $ npm i react-router-dom
+
+        $ npm i react-hook-form
+    }
+
