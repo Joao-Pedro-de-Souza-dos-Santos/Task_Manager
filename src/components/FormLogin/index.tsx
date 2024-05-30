@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "../../components/FormLogin/styles";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../../hook/useAuth";
 
 type InputTypes = {
   email: string;
@@ -10,11 +11,12 @@ type InputTypes = {
 
 export function FormLogin(){
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<InputTypes>()
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<InputTypes>();
+  const {singIn} = useAuth();
 
-  const onSubmit: SubmitHandler<InputTypes> = (data) => {
-    console.log(data);
-    reset();
+  const onSubmit: SubmitHandler<InputTypes> = async ({email, password}) => {
+    const userLogged = await singIn({email, password});
+    if(userLogged) reset();
   }
 
   return (
