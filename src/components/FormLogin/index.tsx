@@ -12,7 +12,7 @@ type InputTypes = {
 export function FormLogin(){
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, reset } = useForm<InputTypes>();
-  const {singIn} = useAuth();
+  const {singIn, isLoading} = useAuth();
 
   const onSubmit: SubmitHandler<InputTypes> = async ({email, password}) => {
     const userLogged = await singIn({email, password});
@@ -55,7 +55,7 @@ export function FormLogin(){
           <span className="inputError">{errors.password?.message}</span>
         </section>
 
-        <Button title="Login" loading={false}/>
+        <Button title="Login" loading={isLoading}/>
       </form>
 
       <span className="messageChangePage">Não tem uma conta?</span>

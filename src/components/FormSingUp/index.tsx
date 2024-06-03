@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "../FormLogin/styles";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../../hook/useAuth";
 
 type InputTypes = {
   name: string;
@@ -12,11 +13,14 @@ type InputTypes = {
 export function FormSingUp(){
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, reset } = useForm<InputTypes>()
+  const { singUp, isLoading } = useAuth();
 
-  const onSubmit: SubmitHandler<InputTypes> = (data) => {
-    console.log(data);
-    reset();
-    navigate("/")
+  const onSubmit: SubmitHandler<InputTypes> = async ({name, email, password}) => {
+    const userCreated = await singUp({name, email, password});
+
+    if (userCreated) { reset(); navigate("/"); }
+    console.log(userCreated);
+
   }
 
   return (
@@ -78,7 +82,7 @@ export function FormSingUp(){
           <span className="inputError">{errors.password?.message}</span>
         </section>
 
-        <Button title="Finalizar" loading={false} variant="secundary"/>
+        <Button title="Finalizar" loading={isLoading} variant="secundary"/>
       </form>
 
       <span className="messageChangePage">Não tem uma conta?</span>
