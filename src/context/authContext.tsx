@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useState } from "react";
+import { PropsWithChildren, createContext, useEffect, useState } from "react";
 import { API } from "../config/api";
 
 export type SingInTypes = {
@@ -17,12 +17,14 @@ type AuthContextTypes = {
     singUp: (params: SingUpTypes) => Promise<boolean | void>;
     singOut: () => void;
     isLoading: boolean;
+    authUserId: string;
 };
 
 export const AuthContext = createContext({} as AuthContextTypes);
 
 export function AuthProvider({children}: PropsWithChildren){
     const [isLoading, setIsLoading] = useState(false);
+    const [authUserId, setAuthUserId] = useState("");
 
     async function singIn({email, password}: SingInTypes){
         if(!email || !password) throw alert("Por Favor, insira o Email e Senha!");
@@ -31,9 +33,14 @@ export function AuthProvider({children}: PropsWithChildren){
         return API
             .post("/login", {email, password})
             .then((response) => {
-                const userID = { userID: response.data.id };
+                const userID = response.data.id;
 
-                localStorage.setItem("@task_manager:user", JSON.stringify(userID));
+                console.log(userID);
+
+
+                setAuthUserId(userID);
+
+                localStorage.setItem("@task_manager:userID", JSON.stringify(userID));
 
                 return true;
             })
@@ -69,11 +76,32 @@ export function AuthProvider({children}: PropsWithChildren){
     }
 
     function singOut(){
-        localStorage.removeItem("@task_manager:user");
-        //remove cookie
+        localStorage.removeItem("@task_manager:userID");
+        setAuthUserId("");
+        API.post("/logout").catch((error) => {
+            console.log(error);
+        })
     }
+
+    useEffect(() => {
+        const userID = localStorage.getItem("@task_manager:userID");
+
+        if (userID){
+            const id = JSON.parse(userID);
+
+            API.get("/user")
+                .then((res) => {
+                if (id == res.data.id) setAuthUserId(userID);
+                })
+                .catch((error) => {
+                    if (error.response?.status == 401) singOut();
+                })
+            setAuthUserId(userID); // get user in api
+        }
+    }, []);
+
     return (
-        <AuthContext.Provider value={{singIn, singUp, singOut, isLoading}}>
+        <AuthContext.Provider value={{singIn, singUp, singOut, isLoading, authUserId}}>
             {children}
         </AuthContext.Provider>
     );

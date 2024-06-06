@@ -1,13 +1,13 @@
 import { Container } from "./styles";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo-rj.png";
-import { FormSingUp } from "../../components/FormSingUp";
+import { FormSignUp } from "../../components/FormSignUp";
 
 export function SingUp() {
   return (
     <Container>
       <div className="singInPart2">
-        <FormSingUp />
+        <FormSignUp />
       </div>
 
       <div className="singInPart1">
