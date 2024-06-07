@@ -2,7 +2,7 @@ import { Container } from "./style";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../Button";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hook/useAuth";
 
 type Inputs = {
   name: string;
@@ -18,11 +18,11 @@ export function FormSignUp() {
     reset,
   } = useForm<Inputs>();
 
-  const { signUp, isLoading } = useAuth();
+  const { singUp, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<Inputs> = async ({ name, email, password }) => {
-    const isUserCreated = await signUp({ name, email, password });
+    const isUserCreated = await singUp({ name, email, password });
 
     if (isUserCreated) {
       navigate("/");
